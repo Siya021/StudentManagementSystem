@@ -1,9 +1,13 @@
 const firstNameInput = document.getElementById('fname');
 const lastNameInput = document.getElementById('lname');
-// const genderInput = document.getElementById('gender');
+const genderInput = document.getElementById('gender');
 const studentMarkInput = document.getElementById('studentMark');
 const studentTable = document.getElementById('student-list');
 const saveBtn = document.getElementById('save')
+
+document.addEventListener("DOMContentLoaded", function(event) {
+    document.getElementById('updateProductButton').click();
+});
 
 let students = [];
 
@@ -20,11 +24,12 @@ function saveStudents() {
     localStorage.setItem('students', JSON.stringify(students));
 }
 
-function addStudent(firstName, lastName, studentMark) {
+function addStudent(firstName, lastName,gender, studentMark) {
     const newStudent = {
         id: Date.now(),
         firstName:firstName,
         lastName:lastName,
+        gender:gender,
         studentMark:studentMark
 
     };
@@ -34,7 +39,7 @@ function addStudent(firstName, lastName, studentMark) {
 }
 
 saveBtn.addEventListener('click', function(){
-    addStudent(firstNameInput.value, lastNameInput.value, studentMarkInput.value);
+    addStudent(firstNameInput.value, lastNameInput.value,genderInput.value, studentMarkInput.value);
 })
 
 function displayStudents() {
@@ -73,6 +78,7 @@ function editStudent(id) {
     if (student) {
         firstNameInput.value = student.firstName;
         lastNameInput.value = student.lastName;
+        genderInput.value = student.gender;
         studentMarkInput.value = student.studentMark;
         document.getElementById('updateProductModal').setAttribute('data-student-id', id);
         document.getElementById('updateProductModal').classList.remove('hidden');
@@ -122,6 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const firstName = document.getElementById('fname').value;
             const lastName = document.getElementById('lname').value;
+            const gender = document.getElementById('gender').value;
             const studentMark = document.getElementById('studentMark').value;
             addStudent(firstName, lastName, studentMark);
             this.reset();
@@ -134,11 +141,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const id = parseInt(this.closest('#updateProductModal').getAttribute('data-student-id'));
             const firstName = document.getElementById('fname').value;
             const lastName = document.getElementById('lname').value;
+            const gender = document.getElementById('gender').value;
             const studentMark = document.getElementById('studentMark').value;
             
             const studentIndex = students.findIndex(s => s.id === id);
             if (studentIndex !== -1) {
-                students[studentIndex] = { id, firstName, lastName, studentMark };
+                students[studentIndex] = { id, firstName, lastName,gender, studentMark };
                 saveStudents();
                 displayStudents();
                 document.getElementById('updateProductModal').classList.add('hidden');
@@ -152,3 +160,108 @@ document.addEventListener('DOMContentLoaded', function() {
 
     loadStudents();
 });
+
+// Graph Code 
+const ctx = document.getElementById('marks-chart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Math', 'Science', 'English', 'History', 'Art'],
+                datasets: [
+                    {
+                        label: 'male',
+                        data: [75, 82, 78, 70, 65],
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'female',
+                        data: [80, 85, 83, 75, 72],
+                        backgroundColor: 'rgba(236, 72, 153, 0.8)',
+                        borderColor: 'rgb(236, 72, 153)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Average Marks by Subject'
+                    }
+                }
+            }
+        });
+
+
+//   calculator
+
+const display = document.getElementById('display');
+const buttons = document.querySelectorAll('button');
+let currentValue = '';
+let operator = '';
+let firstOperand = '';
+
+buttons.forEach(button => {
+    button.addEventListener('click', () => {
+        const value = button.textContent;
+        
+        if (button.classList.contains('number')) {
+            currentValue += value;
+            display.value = currentValue;
+        } else if (button.classList.contains('operator')) {
+            if (firstOperand === '') {
+                firstOperand = currentValue;
+                operator = value;
+                currentValue = '';
+            } else {
+                calculate();
+                operator = value;
+            }
+        } else if (value === '=') {
+            calculate();
+        } else if (value === 'Clear') {
+            clear();
+        }
+    });
+});
+
+function calculate() {
+    if (firstOperand !== '' && currentValue !== '') {
+        switch(operator) {
+            case '+':
+                currentValue = parseFloat(firstOperand) + parseFloat(currentValue);
+                break;
+            case '-':
+                currentValue = parseFloat(firstOperand) - parseFloat(currentValue);
+                break;
+            case '*':
+                currentValue = parseFloat(firstOperand) * parseFloat(currentValue);
+                break;
+            case '/':
+                currentValue = parseFloat(firstOperand) / parseFloat(currentValue);
+                break;
+        }
+        display.value = currentValue;
+        firstOperand = currentValue;
+        currentValue = '';
+    }
+}
+
+function clear() {
+    currentValue = '';
+    firstOperand = '';
+    operator = '';
+    display.value = '';
+}
