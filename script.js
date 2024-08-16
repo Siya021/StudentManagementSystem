@@ -1,8 +1,9 @@
 const firstNameInput = document.getElementById('fname');
 const lastNameInput = document.getElementById('lname');
+// const genderInput = document.getElementById('gender');
 const studentMarkInput = document.getElementById('studentMark');
 const studentTable = document.getElementById('student-list');
-const saveBtn = document.getElementById('save');
+const saveBtn = document.getElementById('save')
 
 let students = [];
 
@@ -25,6 +26,7 @@ function addStudent(firstName, lastName, studentMark) {
         firstName:firstName,
         lastName:lastName,
         studentMark:studentMark
+
     };
     students.push(newStudent);
     saveStudents();
@@ -53,6 +55,7 @@ function displayStudents() {
         row.innerHTML = `
             <td class="px-4 py-3">${student.firstName}</td>
             <td class="px-4 py-3">${student.lastName}</td>
+            <td class="px-4 py-3">${student.gender}</td>
             <td class="px-4 py-3">${student.studentMark}</td>
             <td class="px-4 py-3 flex items-center justify-end">
                 <button onclick="editStudent(${student.id})" data-modal-target="updateProductModal" data-modal-toggle="updateProductModal" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-2">Edit</button>
@@ -95,9 +98,9 @@ function confirmDelete(id) {
 function deleteStudent() {
     const id = parseInt(document.getElementById('deleteModal').getAttribute('data-student-id'));
     students = students.filter(s => s.id !== id);
+    document.getElementById('deleteModal').classList.add('hidden');
     saveStudents();
     displayStudents();
-    document.getElementById('deleteModal').classList.add('hidden');
 }
 
 // document.getElementById('addStudentForm').addEventListener('click', function(e) {
