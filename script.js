@@ -162,48 +162,109 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Graph Code 
-const ctx = document.getElementById('marks-chart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Math', 'Science', 'English', 'History', 'Art'],
-                datasets: [
-                    {
-                        label: 'male',
-                        data: [75, 82, 78, 70, 65],
-                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                        borderColor: 'rgb(59, 130, 246)',
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'female',
-                        data: [80, 85, 83, 75, 72],
-                        backgroundColor: 'rgba(236, 72, 153, 0.8)',
-                        borderColor: 'rgb(236, 72, 153)',
-                        borderWidth: 1
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100
-                    }
-                },
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Average Marks by Subject'
-                    }
-                }
-            }
-        });
-
+const options = {
+    chart: {
+      // Adjust size as needed
+      height: 240,
+      width: 600, // Adjust width for better readability
+      type: "area",
+      fontFamily: "Inter, sans-serif",
+      dropShadow: {
+        enabled: false,
+      },
+      toolbar: {
+        show: false,
+      },
+    },
+    tooltip: {
+      enabled: true,
+      x: {
+        show: false,
+      },
+    },
+    fill: {
+      type: "gradient",
+      gradient: {
+        opacityFrom: 0.55,
+        opacityTo: 0,
+        shade: "#1C64F2",
+        gradientToColors: ["#1C64F2"],
+      },
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    stroke: {
+      width: 6,
+    },
+    grid: {
+      show: false,
+      strokeDashArray: 4,
+      padding: {
+        left: 2,
+        right: 2,
+        top: -26,
+      },
+    },
+    series: [], // We'll dynamically populate this later
+    xaxis: {
+      categories: [], // We'll dynamically populate this later
+      labels: {
+        show: true, // Show student names on x-axis
+        rotate: -45, // Rotate labels for better readability with long names
+        formatter: function (val) {
+          return val; // Display the full value without modification
+        },
+      },
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
+        show: false,
+      },
+    },
+    yaxis: {
+      show: true, // Show y-axis labels
+      labels: {
+        formatter: function (value) {
+          return value + "%"; // Add percentage symbol to marks
+        },
+      },
+    },
+  };
+  
+  // Function to update chart data based on students array
+  function updateChartData() {
+    const maleData = [];
+    const femaleData = [];
+    const studentNames = [];
+  
+    // Loop through students array and populate data and labels
+    for (const student of students) {
+      if (student.gender === "Male") {
+        maleData.push(student.studentMark);
+      } else {
+        femaleData.push(student.studentMark);
+      }
+      studentNames.push(`${student.lastName}, ${student.firstName[0]}`); // Combine last name and first initial
+    }
+  
+    // Update chart options with new data and labels
+    options.series = [
+      { name: "Male", data: maleData, color: "#1A56DB" },
+      { name: "Female", data: femaleData, color: "#7E3BF2" },
+    ];
+    options.xaxis.categories = studentNames;
+  
+    // Render the chart with updated data
+    const chart = new ApexCharts(document.getElementById("size-chart"), options);
+    chart.render();
+  }
+  
+  // Call updateChartData() after student data is loaded or updated
+  if (document.getElementById("size-chart") && typeof ApexCharts !== 'undefined') {
+    updateChartData();
+  }
 
 //   calculator
 
@@ -216,19 +277,17 @@ let firstOperand = '';
 buttons.forEach(button => {
     button.addEventListener('click', () => {
         const value = button.textContent;
-        
+
         if (button.classList.contains('number')) {
             currentValue += value;
             display.value = currentValue;
         } else if (button.classList.contains('operator')) {
-            if (firstOperand === '') {
-                firstOperand = currentValue;
-                operator = value;
-                currentValue = '';
-            } else {
+            if (firstOperand !== '') {
                 calculate();
-                operator = value;
             }
+            firstOperand = currentValue;
+            operator = value;
+            currentValue = '';
         } else if (value === '=') {
             calculate();
         } else if (value === 'Clear') {
@@ -239,23 +298,28 @@ buttons.forEach(button => {
 
 function calculate() {
     if (firstOperand !== '' && currentValue !== '') {
-        switch(operator) {
+        let result;
+        switch (operator) {
             case '+':
-                currentValue = parseFloat(firstOperand) + parseFloat(currentValue);
+                result = parseFloat(firstOperand) + parseFloat(currentValue);
                 break;
             case '-':
-                currentValue = parseFloat(firstOperand) - parseFloat(currentValue);
+                result = parseFloat(firstOperand) - parseFloat(currentValue);
                 break;
             case '*':
-                currentValue = parseFloat(firstOperand) * parseFloat(currentValue);
+                result = parseFloat(firstOperand) * parseFloat(currentValue);
                 break;
             case '/':
-                currentValue = parseFloat(firstOperand) / parseFloat(currentValue);
+                result = parseFloat(firstOperand) / parseFloat(currentValue);
                 break;
+            default:
+                return;
         }
+
+        currentValue = result.toString();
         display.value = currentValue;
-        firstOperand = currentValue;
-        currentValue = '';
+        firstOperand = '';
+        operator = '';
     }
 }
 
@@ -265,3 +329,4 @@ function clear() {
     operator = '';
     display.value = '';
 }
+
