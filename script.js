@@ -162,109 +162,57 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Graph Code 
-const options = {
-    chart: {
-      // Adjust size as needed
-      height: 240,
-      width: 600, // Adjust width for better readability
-      type: "area",
-      fontFamily: "Inter, sans-serif",
-      dropShadow: {
-        enabled: false,
-      },
-      toolbar: {
-        show: false,
-      },
-    },
-    tooltip: {
-      enabled: true,
-      x: {
-        show: false,
-      },
-    },
-    fill: {
-      type: "gradient",
-      gradient: {
-        opacityFrom: 0.55,
-        opacityTo: 0,
-        shade: "#1C64F2",
-        gradientToColors: ["#1C64F2"],
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      width: 6,
-    },
-    grid: {
-      show: false,
-      strokeDashArray: 4,
-      padding: {
-        left: 2,
-        right: 2,
-        top: -26,
-      },
-    },
-    series: [], // We'll dynamically populate this later
-    xaxis: {
-      categories: [], // We'll dynamically populate this later
-      labels: {
-        show: true, // Show student names on x-axis
-        rotate: -45, // Rotate labels for better readability with long names
-        formatter: function (val) {
-          return val; // Display the full value without modification
-        },
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-    },
-    yaxis: {
-      show: true, // Show y-axis labels
-      labels: {
-        formatter: function (value) {
-          return value + "%"; // Add percentage symbol to marks
-        },
-      },
-    },
-  };
-  
-  // Function to update chart data based on students array
-  function updateChartData() {
-    const maleData = [];
-    const femaleData = [];
-    const studentNames = [];
-  
-    // Loop through students array and populate data and labels
-    for (const student of students) {
-      if (student.gender === "Male") {
-        maleData.push(student.studentMark);
-      } else {
-        femaleData.push(student.studentMark);
+function renderChart() {
+  const ctx = document.getElementById('myChart').getContext('2d');
+  const ranges = [0,10,20,30,40,50,60,70,80,90,100];
+  const dataCounts = new Array(ranges.length-1).fill(0)
+
+
+  students.forEach(student => {
+    const mark = student.mark;
+    for (let i = 0; i < ranges.length - 1; i++){
+      if ( mark >= ranges[i] && mark < ranges[i + 1]){
+        dataCounts[i]++;
+        break
       }
-      studentNames.push(`${student.lastName}, ${student.firstName[0]}`); // Combine last name and first initial
     }
-  
-    // Update chart options with new data and labels
-    options.series = [
-      { name: "Male", data: maleData, color: "#1A56DB" },
-      { name: "Female", data: femaleData, color: "#7E3BF2" },
-    ];
-    options.xaxis.categories = studentNames;
-  
-    // Render the chart with updated data
-    const chart = new ApexCharts(document.getElementById("size-chart"), options);
-    chart.render();
-  }
-  
-  // Call updateChartData() after student data is loaded or updated
-  if (document.getElementById("size-chart") && typeof ApexCharts !== 'undefined') {
-    updateChartData();
-  }
+  })
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['0-49', '50-59', '60-69', '70-79', '80-89', '90-100'],
+      datasets: [{
+        label: 'Marks Distribution',
+        data: dataCounts,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Students'
+          }
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks:{
+            label: function(context){
+              const rangeIndex = context.dataIndex;
+              return `${
+              labels[rangeIndex]}:${dataCounts[rangeIndex]} students`
+            }
+          }
+        }
+      }
+    }
+  });
+}
+renderChart()
 
 //   calculator
 
