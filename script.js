@@ -4,12 +4,15 @@ const genderInput = document.getElementById('gender');
 const studentMarkInput = document.getElementById('studentMark');
 const studentTable = document.getElementById('student-list');
 const saveBtn = document.getElementById('save')
+ 
+let chartInstance = null;
+
 
 document.addEventListener("DOMContentLoaded", function(event) {
     document.getElementById('updateProductButton').click();
 });
 
-let students = [];
+let students = JSON.parse(localStorage.getItem('students')) || [];
 
 function loadStudents() {
     const storedStudents = localStorage.getItem('students');
@@ -64,7 +67,6 @@ function displayStudents() {
             <td class="px-4 py-3">${student.studentMark}</td>
             <td class="px-4 py-3 flex items-center justify-end">
                 <button onclick="editStudent(${student.id})" data-modal-target="updateProductModal" data-modal-toggle="updateProductModal" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-2">Edit</button>
-                <button onclick="viewStudent(${student.id})" data-modal-target="readProductModal" data-modal-toggle="readProductModal" class="font-medium text-green-600 dark:text-green-500 hover:underline mr-2">View</button>
                 <button onclick="confirmDelete(${student.id})" data-modal-target="deleteModal" data-modal-toggle="deleteModal" class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</button>
             </td>
         `;
@@ -130,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const lastName = document.getElementById('lname').value;
             const gender = document.getElementById('gender').value;
             const studentMark = document.getElementById('studentMark').value;
-            addStudent(firstName, lastName, studentMark);
+            addStudent(firstName, lastName,gender, studentMark);
             this.reset();
         });
     }
@@ -163,14 +165,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Graph Code 
 function renderChart() {
-  const ctx = document.getElementById('myChart').getContext('2d');
+  const ctx = document.getElementById('myChart').getContext('2d') 
+
+  if (chartInstance) {
+    chartInstance.destroy();
+}
+
+
   const ranges = [0,10,20,30,40,50,60,70,80,90,100];
   const dataCounts = new Array(ranges.length-1).fill(0)
 
 
   students.forEach(student => {
-    const mark = student.mark;
-    for (let i = 0; i < ranges.length - 1; i++){
+    const mark = student.studentMark;
+    for (let i = 0; i < ranges.length - 1; 
+    i++){
       if ( mark >= ranges[i] && mark < ranges[i + 1]){
         dataCounts[i]++;
         break
@@ -178,18 +187,26 @@ function renderChart() {
     }
   })
 
-  new Chart(ctx, {
+  chartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: ['0-49', '50-59', '60-69', '70-79', '80-89', '90-100'],
       datasets: [{
-        label: 'Marks Distribution',
+        label: 'Number of Students',
         data: dataCounts,
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1
-      }]
+    }]
     },
     options: {
       scales: {
+        x: {
+            title: {
+                display: true,
+                text: 'Grade Ranges'
+            }
+        },
         y: {
           beginAtZero: true,
           title: {
@@ -213,6 +230,7 @@ function renderChart() {
   });
 }
 renderChart()
+console.log(renderChart())
 
 //   calculator
 
@@ -278,3 +296,36 @@ function clear() {
     display.value = '';
 }
 
+// search
+
+function searchContent() {
+    const searchInput = document.getElementById("simple-search");
+    const contentToSearch = document.querySelectorAll(".content-item");
+  
+
+    const debounce = (func, delay) => {
+      let timeout;
+      return function () {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), delay);
+      };
+    };
+  
+   
+    const debouncedSearch = debounce((searchTerm) => {
+      contentToSearch.forEach((item) => {
+        const itemText = item.textContent.toLowerCase();
+        const isMatch = itemText.includes(searchTerm);
+        item.style.display = isMatch ? "block" : "none";
+      });
+    }, 300);
+  
+    searchInput.addEventListener("input", (event) => {
+      const searchTerm = event.target.value.toLowerCase();
+      debouncedSearch(searchTerm);
+    });
+  }
+  
+  searchContent();
