@@ -329,3 +329,27 @@ function searchContent() {
   }
   
   searchContent();
+
+
+//   Modal 
+// document.getElementById('student-btn').addEventListener('click', function() {
+//     document.getElementById('student-dashboard').classList.remove('hidden');
+//     document.getElementById('teacher-dashboard').classList.add('hidden');
+// });
+
+// document.getElementById('teacher-btn').addEventListener('click', function() {
+//     document.getElementById('teacher-dashboard').classList.remove('hidden');
+//     document.getElementById('student-dashboard').classList.add('hidden');
+// });
+
+const modalButton = document.querySelector('[data-modal-target="portal-modal"]');
+const modal = document.querySelector('[data-modal-target="portal-modal"]');
+const closeButton = document.querySelector('[data-modal-toggle="portal-modal"]');
+
+modalButton.addEventListener('click', () => {
+  modal.classList.remove('hidden');
+});
+
+closeButton.addEventListener('click', () => {
+  modal.classList.add('hidden');
+});
