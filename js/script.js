@@ -75,28 +75,19 @@ function displayStudents() {
 }
 
 
-function editStudent(id) {
-    const student = students.find(s => s.id === id);
-    if (student) {
-        firstNameInput.value = student.firstName;
-        lastNameInput.value = student.lastName;
-        genderInput.value = student.gender;
-        studentMarkInput.value = student.studentMark;
-        document.getElementById('updateProductModal').setAttribute('data-student-id', id);
-        document.getElementById('updateProductModal').classList.remove('hidden');
-    }
-}
-
-// function viewStudent(id) {
+// function editStudent(id) {
 //     const student = students.find(s => s.id === id);
 //     if (student) {
-//         const modal = document.getElementById('readProductModal');
-//         modal.querySelector('h3').textContent = `${student.firstName} ${student.lastName}`;
-//         modal.querySelector('p').textContent = `Mark: ${student.studentMark}`;
-//         modal.querySelector('dd').textContent = `First Name: ${student.firstName}, Last Name: ${student.lastName}, Mark: ${student.studentMark}`;
-//         modal.classList.remove('hidden');
+//         firstNameInput.value = student.firstName;
+//         lastNameInput.value = student.lastName;
+//         genderInput.value = student.gender;
+//         studentMarkInput.value = student.studentMark;
+//         document.getElementById('updateProductModal').setAttribute('data-student-id', id);
+//         document.getElementById('updateProductModal').classList.remove('hidden');
 //     }
 // }
+
+
 
 function confirmDelete(id) {
     document.getElementById('deleteModal').setAttribute('data-student-id', id);
@@ -111,57 +102,49 @@ function deleteStudent() {
     displayStudents();
 }
 
-// document.getElementById('addStudentForm').addEventListener('click', function(e) {
-//     e.preventDefault();
-//     const firstName = document.getElementById('fname').value;
-//     const lastName = document.getElementById('lname').value;
-//     const studentMark = document.getElementById('studentMark').value;
-//     addStudent(firstName, lastName, studentMark);
-//     this.reset();
-// });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const addStudentForm = document.getElementById('addStudentForm');
-    const updateProductModalForm = document.getElementById('updateProductModal').querySelector('form');
-    const deleteModalSubmitButton = document.querySelector('#deleteModal button[type="submit"]');
+// document.addEventListener('DOMContentLoaded', function() {
+//     const addStudentForm = document.getElementById('addStudentForm');
+//     const updateProductModalForm = document.getElementById('updateProductModal').querySelector('form');
+//     const deleteModalSubmitButton = document.querySelector('#deleteModal button[type="submit"]');
     
-    if (addStudentForm) {
-        addStudentForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const firstName = document.getElementById('fname').value;
-            const lastName = document.getElementById('lname').value;
-            const gender = document.getElementById('gender').value;
-            const studentMark = document.getElementById('studentMark').value;
-            addStudent(firstName, lastName,gender, studentMark);
-            this.reset();
-        });
-    }
+//     if (addStudentForm) {
+//         addStudentForm.addEventListener('submit', function(e) {
+//             e.preventDefault();
+//             const firstName = document.getElementById('fname').value;
+//             const lastName = document.getElementById('lname').value;
+//             const gender = document.getElementById('gender').value;
+//             const studentMark = document.getElementById('studentMark').value;
+//             addStudent(firstName, lastName,gender, studentMark);
+//             this.reset();
+//         });
+//     }
     
-    if (updateProductModalForm) {
-        updateProductModalForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const id = parseInt(this.closest('#updateProductModal').getAttribute('data-student-id'));
-            const firstName = document.getElementById('fname').value;
-            const lastName = document.getElementById('lname').value;
-            const gender = document.getElementById('gender').value;
-            const studentMark = document.getElementById('studentMark').value;
+//     if (updateProductModalForm) {
+//         updateProductModalForm.addEventListener('submit', function(e) {
+//             e.preventDefault();
+//             const id = parseInt(this.closest('#updateProductModal').getAttribute('data-student-id'));
+//             const firstName = document.getElementById('fname').value;
+//             const lastName = document.getElementById('lname').value;
+//             const gender = document.getElementById('gender').value;
+//             const studentMark = document.getElementById('studentMark').value;
             
-            const studentIndex = students.findIndex(s => s.id === id);
-            if (studentIndex !== -1) {
-                students[studentIndex] = { id, firstName, lastName,gender, studentMark };
-                saveStudents();
-                displayStudents();
-                document.getElementById('updateProductModal').classList.add('hidden');
-            }
-        });
-    }
+//             const studentIndex = students.findIndex(s => s.id === id);
+//             if (studentIndex !== -1) {
+//                 students[studentIndex] = { id, firstName, lastName,gender, studentMark };
+//                 saveStudents();
+//                 displayStudents();
+//                 document.getElementById('updateProductModal').classList.add('hidden');
+//             }
+//         });
+//     }
     
-    if (deleteModalSubmitButton) {
-        deleteModalSubmitButton.addEventListener('click', deleteStudent);
-    }
+//     if (deleteModalSubmitButton) {
+//         deleteModalSubmitButton.addEventListener('click', deleteStudent);
+//     }
 
-    loadStudents();
-});
+//     loadStudents();
+// });
 
 // Graph Code 
 function renderChart() {
@@ -262,6 +245,8 @@ buttons.forEach(button => {
     });
 });
 
+
+
 function calculate() {
     if (firstOperand !== '' && currentValue !== '') {
         let result;
@@ -295,52 +280,147 @@ function clear() {
     operator = '';
     display.value = '';
 }
-
+// calculator
 // search
 
-function searchContent() {
-    const searchInput = document.getElementById("simple-search");
-    const contentToSearch = document.querySelectorAll(".content-item");
+// function searchContent() {
+//     const searchInput = document.getElementById("simple-search");
+//     const contentToSearch = document.querySelectorAll(".content-item");
   
 
-    const debounce = (func, delay) => {
-      let timeout;
-      return function () {
-        const context = this;
-        const args = arguments;
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(context, args), delay);
-      };
-    };
+//     const debounce = (func, delay) => {
+//       let timeout;
+//       return function () {
+//         const context = this;
+//         const args = arguments;
+//         clearTimeout(timeout);
+//         timeout = setTimeout(() => func.apply(context, args), delay);
+//       };
+//     };
   
    
-    const debouncedSearch = debounce((searchTerm) => {
-      contentToSearch.forEach((item) => {
-        const itemText = item.textContent.toLowerCase();
-        const isMatch = itemText.includes(searchTerm);
-        item.style.display = isMatch ? "block" : "none";
-      });
-    }, 300);
+//     const debouncedSearch = debounce((searchTerm) => {
+//       contentToSearch.forEach((item) => {
+//         const itemText = item.textContent.toLowerCase();
+//         const isMatch = itemText.includes(searchTerm);
+//         item.style.display = isMatch ? "block" : "none";
+//       });
+//     }, 300);
   
-    searchInput.addEventListener("input", (event) => {
-      const searchTerm = event.target.value.toLowerCase();
-      debouncedSearch(searchTerm);
-    });
+//     searchInput.addEventListener("input", (event) => {
+//       const searchTerm = event.target.value.toLowerCase();
+//       debouncedSearch(searchTerm);
+//     });
+//   }
+  
+//   searchContent();
+
+
+
+function loadStudents() {
+  const storedStudents = localStorage.getItem('students');
+  if (storedStudents) {
+    students = JSON.parse(storedStudents);
   }
+  displayStudents();
+}
+
+// Function to display students
+// function displayStudents() {
+//   const studentList = document.getElementById('student-list');
+//   studentList.innerHTML = '';
+
+//   students.forEach((student) => {
+//     const studentHTML = `
+//     <td class="px-4 py-3">${student.firstName}</td>
+//              <td class="px-4 py-3">${student.lastName}</td>
+//            <td class="px-4 py-3">${student.gender}</td>
+//              <td class="px-4 py-3">${student.studentMark}</td>
+//             <td class="px-4 py-3 flex items-center justify-end">
+//             <button onclick="editStudent(${student.id})" data-modal-target="updateProductModal" data-modal-toggle="updateProductModal" class="font-medium text-blue-600 dark:text-blue-500 hover:underline mr-2">Edit</button>
+//           <button onclick="confirmDelete(${student.id})" data-modal-target="deleteModal" data-modal-toggle="deleteModal" class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</button>
+//             </td>
   
-  searchContent();
+//     `;
+//     studentList.innerHTML += studentHTML;
+//   });
+// }
 
+// Function to edit a student
+function editStudent(id) {
+  const student = students.find((s) => s.id === id);
+  if (student) {
+    const firstNameInput = document.getElementById('fname');
+    const lastNameInput = document.getElementById('lname');
+    const genderInput = document.getElementById('gender');
+    const studentMarkInput = document.getElementById('studentMark');
 
-//   Modal 
-// document.getElementById('student-btn').addEventListener('click', function() {
-//     document.getElementById('student-dashboard').classList.remove('hidden');
-//     document.getElementById('teacher-dashboard').classList.add('hidden');
-// });
+    firstNameInput.value = student.firstName;
+    lastNameInput.value = student.lastName;
+    genderInput.value = student.gender;
+    studentMarkInput.value = student.studentMark;
 
-// document.getElementById('teacher-btn').addEventListener('click', function() {
-//     document.getElementById('teacher-dashboard').classList.remove('hidden');
-//     document.getElementById('student-dashboard').classList.add('hidden');
-// });
+    const updateProductModal = document.getElementById('updateProductModal');
+    updateProductModal.setAttribute('data-student-id', id);
+    updateProductModal.classList.remove('hidden');
+  }
+}
+
+// Function to update a student
+function updateStudent(id, firstName, lastName, gender, studentMark) {
+  const studentToUpdate = students.find((student) => student.id === id);
+  if (studentToUpdate) {
+    studentToUpdate.firstName = firstName;
+    studentToUpdate.lastName = lastName;
+    studentToUpdate.gender = gender;
+    studentToUpdate.studentMark = studentMark;
+
+    localStorage.setItem('students', JSON.stringify(students));
+    console.log(`Student ${id} updated successfully!`);
+  } else {
+    console.error(`Student ${id} not found!`);
+  }
+  loadStudents();
+}
+
+// Function to delete a student
+function deleteStudent(id) {
+  const studentIndex = students.findIndex((student) => student.id === id);
+  if (studentIndex !== -1) {
+    students.splice(studentIndex, 1);
+    localStorage.setItem('students', JSON.stringify(students));
+    console.log(`Student ${id} deleted successfully!`);
+  } else {
+    console.error(`Student ${id} not found!`);
+  }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', loadStudents);
+
+const studentList = document.getElementById('student-list');
+studentList.addEventListener('click', (e) => {
+  if (e.target.classList.contains('edit-btn')) {
+    const id = parseInt(e.target.getAttribute('data-student-id'));
+    editStudent(id);
+  } else if (e.target.classList.contains('delete-btn')) {
+    const id = parseInt(e.target.getAttribute('data-student-id'));
+    deleteStudent(id);
+  }
+});
+
+const updateProductModalForm = document.getElementById('updateProductModal').querySelector('form');
+updateProductModalForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const id = parseInt(updateProductModalForm.closest('#updateProductModal').getAttribute('data-student-id'));
+  const firstName = document.getElementById('fname').value;
+  const lastName = document.getElementById('lname').value;
+  const gender = document.getElementById('gender').value;
+  const studentMark = document.getElementById('studentMark').value;
+
+  updateStudent(id, firstName, lastName, gender, studentMark);
+});    document.getElementById('updateProductModal').classList.add('hidden');
+
 
 const modalButton = document.querySelector('[data-modal-target="portal-modal"]');
 const modal = document.querySelector('[data-modal-target="portal-modal"]');
@@ -353,3 +433,15 @@ modalButton.addEventListener('click', () => {
 closeButton.addEventListener('click', () => {
   modal.classList.add('hidden');
 });
+
+
+//   Modal 
+// document.getElementById('student-btn').addEventListener('click', function() {
+//     document.getElementById('student-dashboard').classList.remove('hidden');
+// // Function to load students from local storage
+// });
+
+// document.getElementById('teacher-btn').addEventListener('click', function() {
+//     document.getElementById('teacher-dashboard').classList.remove('hidden');
+//     document.getElementById('student-dashboard').classList.add('hidden');
+// });
